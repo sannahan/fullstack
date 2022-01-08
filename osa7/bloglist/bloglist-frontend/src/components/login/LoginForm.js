@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import Notification from './Notification'
+import { Form, Button } from 'react-bootstrap'
+import Notification from '../utils/Notification'
 
 const LoginForm = ({
   handleLogin
@@ -28,27 +29,25 @@ const LoginForm = ({
     <div>
       <h2>log in to application</h2>
       <Notification />
-      <form onSubmit={tryLogin}>
-        <div>
-          username
-          <input
+      <Form onSubmit={tryLogin}>
+        <Form.Group>
+          <Form.Label>username</Form.Label>
+          <Form.Control
             type='text'
             value={username}
             id='username'
             onChange={handleUsernameChange}
           />
-        </div>
-        <div>
-          password
-          <input
+          <Form.Label>password</Form.Label>
+          <Form.Control
             type='password'
             value={password}
             id='password'
             onChange={handlePasswordChange}
           />
-        </div>
-        <button type='submit'>login</button>
-      </form>
+          <Button type='submit'>login</Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

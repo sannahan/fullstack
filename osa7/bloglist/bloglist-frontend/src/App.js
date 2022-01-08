@@ -1,29 +1,25 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, Link } from 'react-router-dom'
-import LoginForm from './components/LoginForm'
-import Blog from './components/Blog'
-import Users from './components/Users'
-import User from './components/User'
-import Menu from './components/Menu'
-import Notification from './components/Notification'
-import Togglable from './components/Togglable'
-import AddBlogForm from './components/AddBlogForm'
+import { Switch, Route } from 'react-router-dom'
+import LoginForm from './components/login/LoginForm'
+import Blog from './components/blogs/Blog'
+import Users from './components/users/Users'
+import User from './components/users/User'
+import Menu from './components/utils/Menu'
+import BlogList from './components/blogs/BlogList'
+import Notification from './components/utils/Notification'
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, addBlog, updateBlog, deleteBlog } from './reducers/blogReducer'
+import { initializeBlogs, updateBlog, deleteBlog } from './reducers/blogReducer'
 import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
   const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [])
-
-  const sortFunction = (previous, next) => next.likes - previous.likes
-  const blogs = useSelector(state => state.blogs.sort(sortFunction))
-  const user = useSelector(state => state.user)
 
   useEffect(() => {
     dispatch(initializeUser())
@@ -45,46 +41,27 @@ const App = () => {
     dispatch(logoutUser())
   }
 
-  const addBlogRef = useRef()
-
-  const handleAdd = async (blogObject) => {
-    try {
-      addBlogRef.current.handleClick()
-      await dispatch(addBlog(blogObject))
-      dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`))
-    } catch (exception) {
-      dispatch(setNotification('could not add blog'))
-    }
-  }
-
   const handleUpdate = async (id, blogObject) => {
     dispatch(updateBlog(id, blogObject))
   }
 
   const handleDelete = async (id) => {
-    dispatch(deleteBlog(id))
-  }
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-    listStyle: 'none'
+    await dispatch(deleteBlog(id))
   }
 
   if (!user) {
     return (
-      <LoginForm
-        handleLogin={handleLogin}
-      />
+      <div className='container'>
+        <LoginForm
+          handleLogin={handleLogin}
+        />
+      </div>
     )
   }
 
   return (
-    <div>
-      <Menu handleLogout={handleLogout}/>
+    <div className='container'>
+      <Menu handleLogout={handleLogout} />
       <h2>blog app</h2>
       <Notification />
 
@@ -99,14 +76,7 @@ const App = () => {
           <Users />
         </Route>
         <Route path='/'>
-          <Togglable buttonLabel='create new blog' ref={addBlogRef}>
-            <AddBlogForm handleAdd={handleAdd} />
-          </Togglable>
-          <div id='blogs'>
-            <ul>
-              {blogs.map(blog => <li key={blog.id} style={blogStyle}><Link to={`/blogs/${blog.id}`}>{blog.title}</Link></li>)}
-            </ul>
-          </div>
+          <BlogList />
         </Route>
       </Switch>
 

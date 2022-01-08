@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { addComment } from '../reducers/blogReducer'
+import { addComment } from '../../reducers/blogReducer'
 
 const Blog = ({ handleUpdate, handleDelete }) => {
   const dispatch = useDispatch()
